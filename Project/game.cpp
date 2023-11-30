@@ -1,66 +1,58 @@
 #include <iostream>
-#include <vector>
-#include <random>
+#include "Graph.h"
 
-// Maze class representing the graph
-class Maze {
-public:
-    Maze(int rows, int cols) : rows_(rows), cols_(cols), graph_(rows* cols) {}
 
-    // Function to generate the maze graph
-    void generateMaze() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, 1);
+using namespace std;
 
-        for (int i = 0; i < rows_; i++) {
-            for (int j = 0; j < cols_; j++) {
-                int node = i * cols_ + j;
-                if (i > 0) {
-                    int topNode = (i - 1) * cols_ + j;
-                    if (dis(gen) == 0) {
-                        graph_[node].push_back(topNode);
-                        graph_[topNode].push_back(node);
-                    }
-                }
-                if (j > 0) {
-                    int leftNode = i * cols_ + (j - 1);
-                    if (dis(gen) == 0) {
-                        graph_[node].push_back(leftNode);
-                        graph_[leftNode].push_back(node);
-                    }
-                }
-            }
-        }
-    }
 
-    // Function to print the maze graph
-    void printMaze() {
-        for (int i = 0; i < rows_; i++) {
-            for (int j = 0; j < cols_; j++) {
-                int node = i * cols_ + j;
-                std::cout << "Node " << node << ": ";
-                for (int neighbor : graph_[node]) {
-                    std::cout << neighbor << " ";
-                }
-                std::cout << std::endl;
-            }
-        }
-    }
+void printVertices(Graph& maze) {
+	// Print the vertexes
+	for (int i = 0; i < maze.gridSize; ++i) {
+		for (int j = 0; j < maze.gridSize; ++j) {
+			cout << "(" << i << ", " << j << ") : " << maze.adjacencyList[i][j] << endl;
+		}
+		cout << endl;
+	}
+}
 
-private:
-    int rows_;
-    int cols_;
-    std::vector<std::vector<int>> graph_;
-};
+void printGrid(Graph& maze) {
+
+    // Print horizontal lines
+    for (int i = 0; i < maze.gridSize; ++i) {
+        for (int j = 0; j < maze.gridSize; ++j) {
+			cout << "+";
+			
+			if (maze.ifRightExists(i, j)) {
+				cout << " -- ";
+			} else {
+				cout << "    ";
+			}
+		}
+		cout << endl;
+
+		// Print vertical lines
+		for (int j = 0; j < maze.gridSize; ++j) {
+			if (maze.ifDownExists(i, j)) {
+				cout << "|    ";
+			} else {
+				cout << "     ";
+			}
+		}
+		cout << endl;
+	}
+
+}
 
 int main() {
-    int rows = 5;
-    int cols = 5;
+    // Set the size of the maze grid
+    int gridSize = 5;
 
-    Maze maze(rows, cols);
-    maze.generateMaze();
-    maze.printMaze();
+    // Create a maze graph
+    Graph maze(gridSize);
+
+	printVertices(maze);
+    // Print the grid with lines representing adjacency
+    printGrid(maze);
 
     return 0;
 }
