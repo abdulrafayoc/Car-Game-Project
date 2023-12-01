@@ -9,17 +9,17 @@ class Node {
 public:
 	int x;
 	int y;
-	bool car;
+	/*bool car;
 	bool finish;
 	bool obstacle;
-	bool powerup;
+	bool powerup;*/
 	Node* next;
 
 	Node(int xx, int yy) : x(xx), y(yy), next(nullptr) { 
-		car = false;
-		finish = false;
-		obstacle = false;
-		powerup = false;
+		//car = false;
+		//finish = false;
+		//obstacle = false;
+		//powerup = false;
 	}
 };
 
@@ -27,8 +27,12 @@ public:
 class LinkedList {
 public:
 	Node* head;
+	bool car;
+	bool finish;
 
-	LinkedList() : head(nullptr) {}
+	LinkedList() : head(nullptr) { 
+		car = false;
+	}
 
 	void addNode(int x, int y) {
 		// if the node already exists
@@ -55,4 +59,52 @@ public:
 		return os;
 	}
 
+};
+
+
+class Queue {
+	public:
+	int* x;
+	int* y;
+	int front;
+	int rear;
+	int size;
+
+	Queue(int s = 100) : size(s), front(-1), rear(-1) {
+		x = new int[size];
+		y = new int[size];
+	}
+
+	~Queue() {
+		delete[] x;
+		delete[] y;
+	}
+
+	void push(int xx, int yy) {
+		if (front == -1) {
+			front = 0;
+		}
+		rear++;
+		x[rear] = xx;
+		y[rear] = yy;
+	}
+
+	void pop() {
+		if (front == -1 || front > rear) {
+			return;
+		}
+		front++;
+	}
+
+	int frontX() {
+		return x[front];
+	}
+
+	int frontY() {
+		return y[front];
+	}
+
+	bool isEmpty() {
+		return front == -1 || front > rear;
+	}
 };
