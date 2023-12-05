@@ -1,9 +1,15 @@
 ﻿#include <iostream>
 #include <random>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <chrono>
+#include <thread>
 
 #include "LinkedList.h"
 
 using namespace std;
+using namespace chrono;
 
 
 // Name            FG  BG
@@ -23,6 +29,165 @@ using namespace std;
 // Bright Magenta  95  105
 // Bright Cyan     96  106
 // Bright White    97  107
+
+auto startTimer() {
+	return high_resolution_clock::now();
+}
+
+int stopTimer(const decltype(high_resolution_clock::now())& start_time) {
+	auto stop_time = high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(stop_time - start_time);
+	cout << "Time elapsed: " << duration.count() << " seconds" << endl;
+	return duration.count();
+}
+
+class Player {
+public:
+	string name;
+	int score;
+
+	Player()
+	{
+		name = "";
+		score = 0;
+	}
+
+	// Constructor to initialize name and score
+	Player(const string& playerName, int playerScore) : name(playerName), score(playerScore) {}
+
+	bool operator<(const Player& p) const {
+		return (score < score);
+	}
+
+	// Add more comparison operators as needed
+
+	// Example: Overloading greater than operator (>)
+	bool operator>(const Player& p) const {
+		return (score > p.score);
+	}
+};
+
+class MaxHeap {
+private:
+	Player* heapArray;
+	int capacity;
+	int size;
+
+	int parent(int i) { return (i - 1) / 2; }
+	int leftChild(int i) { return 2 * i + 1; }
+	int rightChild(int i) { return 2 * i + 2; }
+
+	void heapifyUp(int index) {
+		while (index > 0 && heapArray[parent(index)].score < heapArray[index].score) {
+			swap(heapArray[parent(index)], heapArray[index]);
+			index = parent(index);
+		}
+	}
+
+	void heapifyDown(int index) {
+		int maxIndex = index;
+		int left = leftChild(index);
+		int right = rightChild(index);
+
+		if (left < size && heapArray[left].score > heapArray[maxIndex].score) {
+			maxIndex = left;
+		}
+
+		if (right < size && heapArray[right].score > heapArray[maxIndex].score) {
+			maxIndex = right;
+		}
+
+		if (index != maxIndex) {
+			swap(heapArray[index], heapArray[maxIndex]);
+			heapifyDown(maxIndex);
+		}
+	}
+
+public:
+	MaxHeap(int capacity) : capacity(capacity), size(0) {
+		heapArray = new Player[capacity];
+	}
+
+	~MaxHeap() {
+		delete[] heapArray;
+	}
+
+	void insert(const Player& player) {
+		if (size == capacity) {
+			cout << "Heap is full, cannot insert more elements." << endl;
+			return;
+		}
+
+		size++;
+		int index = size - 1;
+		heapArray[index] = player;
+		heapifyUp(index);
+	}
+
+	Player extractMax() {
+		if (size <= 0) {
+			cout << "Heap is empty." << endl;
+			return Player("", 0); // Return a default player if the heap is empty
+		}
+
+		if (size == 1) {
+			size--;
+			return heapArray[0];
+		}
+
+		Player root = heapArray[0];
+		heapArray[0] = heapArray[size - 1];
+		size--;
+		heapifyDown(0);
+
+		return root;
+	}
+
+	void display() {
+		for (int i = 0; i < size; ++i) {
+			cout << "Player: " << heapArray[i].name << ", Score: " << heapArray[i].score << endl;
+		}
+	}
+};
+
+void readDataFromFile() {
+	ifstream inputFile("scores.txt");
+
+	if (!inputFile.is_open()) {
+		cout << "Error opening the file." << endl;
+		return;
+	}
+
+	int numPlayers = 0;
+	string line;
+	while (getline(inputFile, line)) {
+		++numPlayers;
+	}
+	inputFile.clear();
+	inputFile.seekg(0, ios::beg);
+
+	Player* players = new Player[numPlayers];
+
+	for (int i = 0; i < numPlayers; ++i) {
+		getline(inputFile, line, ',');
+		players[i].name = line;
+
+		inputFile >> players[i].score;
+		inputFile.ignore();
+
+	}
+
+	inputFile.close();
+
+	MaxHeap h(numPlayers);
+	for (int i = 0; i < numPlayers; i++)
+	{
+		h.insert(players[i]);
+	}
+
+	Player highscorer = h.extractMax();
+	cout << "Name: " << highscorer.name << endl << "Score: " << highscorer.score;
+}
 
 // Graph class for representing the maze
 class Graph {
@@ -351,6 +516,33 @@ public:
 	Car() : x(0), y(0), score(0) {}
 	Car(int x, int y) : x(x), y(y), score(0) {}
 
+	bool SearchName(const string& name, fstream& inputFile) {
+		string line;
+		while (getline(inputFile, line)) {
+			size_t commaPos = line.find(',');
+			if (commaPos != string::npos) {
+				string nameInFile = line.substr(0, commaPos);
+				if (nameInFile == name) {
+					return true;  // Name found
+				}
+			}
+		}
+		return false;  // Name not found
+	}
+
+	void RecordScore()
+	{
+		//cout << "Enetered the record scores func";
+		fstream inputFile("scores.txt");
+		if (!inputFile.is_open()) {
+			cout << "Error opening the file" << endl;
+		}
+
+		inputFile.close();
+		ofstream outputFile("scores.txt", ios::app);
+		outputFile << name << "," << score << endl;
+		outputFile.close();
+	}
 
 	bool checkWin(Graph& maze) {
 		if (maze.adjacencyList[x][y].finish == true) {
@@ -361,7 +553,10 @@ public:
 
 	void showWin(Graph& maze) {
 		if (checkWin(maze)) {
+			RecordScore();
 			cout << "You win!" << endl;
+			cout << "\n\n\nHighScorer:\n";
+			readDataFromFile();
 			exit(0);
 		}
 	}
@@ -452,5 +647,4 @@ public:
 		cout << "Player: (" << x << ", " << y << ")" << endl;
 	}
 };
-
 

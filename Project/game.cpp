@@ -101,7 +101,7 @@ void dijkstra(Graph& maze, Car& ai)
 					cout << "x: " << temp->x << " y: " << temp->y << endl;
 					cout << "d: " << d << " weight: " << temp->weight << endl;
 					// update the distance of the vertex
-				
+
 					distance[temp->x][temp->y] = d + temp->weight;
 
 					// push the vertex in the priority queue
@@ -113,7 +113,7 @@ void dijkstra(Graph& maze, Car& ai)
 
 
 				}
-				
+
 			}
 			temp = temp->next;
 		}
@@ -132,7 +132,7 @@ void dijkstra(Graph& maze, Car& ai)
 	cout << endl
 		<< "Path: " << endl;
 	Stack path = parent[gridSize - 1][gridSize - 1];
-	
+
 	while (!path.isEmpty())
 	{
 		cout << path.topX() << " " << path.topY() << endl;
@@ -256,11 +256,18 @@ void play(Graph& maze, Car& player)
 	}
 }
 
+
+
 int main()
 {
 	int gridSize = 10;
 
 	Graph maze(gridSize);
+
+	string name;
+	cout << "Enter Name: ";
+	getline(cin, name);
+
 
 	// maze.printVertices();
 
@@ -269,6 +276,8 @@ int main()
 
 	Car player;
 	Car AI;
+
+	player.name = name;
 
 	// menu
 	cout << "1. Play" << endl;
@@ -281,15 +290,21 @@ int main()
 	switch (choice)
 	{
 	case 1:
+	{
+		//auto start_time = startTimer();
 		play(maze, player);
 		break;
+	}
 	case 2:
+	{
 		dijkstra(maze, AI);
 		cout << "function successfull";
-
+	}
 	default:
 		break;
 	}
+
+
 
 	return 0;
 }
