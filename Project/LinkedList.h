@@ -5,30 +5,48 @@
 using namespace std;
 
 // Node class for representing vertices in the graph
-class Node {
-public:
-	int x;
-	int y;
-	int weight;
-	Node* next;
 
-	Node(int xx, int yy) : x(xx), y(yy), next(nullptr) {
-		weight = 5;
-
-	}
-};
 
 // LinkedList class for representing adjacency lists
 class LinkedList {
 public:
-	Node* head;
 
-	int size;
+	int x;
+	int y;
+
+	int numNeb;
 
 	bool car;
 	bool finish;
 	bool obstacle;
 	bool powerup;
+
+	class Node {
+	public:
+		LinkedList* vertex;
+		int weight;
+		Node* next;
+
+		Node(LinkedList* v, int w) : vertex(v), weight(w), next(nullptr) {}
+
+		void addWeight(int w, LinkedList* thiss) {
+			LinkedList::Node* temp = vertex->head;
+			while (temp != nullptr) {
+				// compare the address of this LinkedList object pointed by temp
+				if (temp->vertex == thiss) {
+					cout << *vertex << endl;
+					cout << "Vertex not found in the linked list." << endl;
+					temp->weight = w;
+					cout << temp->weight << endl;
+					return;
+				}
+				temp = temp->next;
+			}
+		}
+	};
+
+	Node* head;
+
 
 
 	LinkedList() : head(nullptr) {
@@ -36,28 +54,51 @@ public:
 		finish = false;
 		obstacle = false;
 		powerup = false;
-		size = 0;
+		numNeb = 0;
 	}
 
-	void addNode(int x, int y) {
+	LinkedList(int xx, int yy) : head(nullptr), x(xx), y(yy) {
+		car = false;
+		finish = false;
+		obstacle = false;
+		powerup = false;
+		numNeb = 0;
+	}
+
+	// << operator overloading
+	friend ostream& operator<<(ostream& os, const LinkedList& list) {
+		Node* temp = list.head;
+		while (temp != nullptr) {
+			os << "(" << temp->vertex->x << " " << temp->vertex->y << " " << temp->weight << ")";
+			temp = temp->next;
+		}
+		return os;
+	}
+
+	void addNeighbor(LinkedList* v, int w) {
 		// if the node already exists
 		Node* temp = head;
 		while (temp != nullptr) {
-			if (temp->x == x && temp->y == y) {
+			if (temp->vertex == v) {
 				return;
 			}
 			temp = temp->next;
 		}
 
-		Node* newNode = new Node(x, y);
+		// if the node does not exist
+		Node* newNode = new Node(v, w);
 		newNode->next = head;
 		head = newNode;
-		size++;
+		numNeb++;
+
+
 	}
+
+
 
 	// [] operator overloading
 	Node* operator[](int index) {
-		if (index < 0 || index >= size) {
+		if (index < 0 || index >= numNeb) {
 			return nullptr;
 		}
 		Node* temp = head;
@@ -66,19 +107,6 @@ public:
 		}
 		return temp;
 	}
-
-
-
-
-	friend ostream& operator<<(ostream& os, const LinkedList& ll) {
-		Node* temp = ll.head;
-		while (temp != nullptr) {
-			os << "(" << temp->x << ", " << temp->y << ") ";
-			temp = temp->next;
-		}
-		return os;
-	}
-
 };
 
 
@@ -252,3 +280,4 @@ public:
 		return front == -1 || front > rear;
 	}
 };
+

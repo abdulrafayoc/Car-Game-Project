@@ -69,6 +69,7 @@ void dijkstra(Graph& maze, Car& ai)
 		int y = pq.frontY();
 		int d = pq.frontD();
 
+
 		// pop the top element from the priority queue
 		pq.dequeue();
 
@@ -87,7 +88,8 @@ void dijkstra(Graph& maze, Car& ai)
 			break;
 		}
 
-		// if the vertex is not the finish vertex, continue
+		// get the head of the adjacency list of the vertex
+		LinkedList::Node* temp = maze.adjacencyList[x][y].head;
 
 		Node* temp = maze.adjacencyList[x][y].head;
 		while (temp != nullptr)
@@ -103,21 +105,6 @@ void dijkstra(Graph& maze, Car& ai)
 					// update the distance of the vertex
 
 					distance[temp->x][temp->y] = d + temp->weight;
-
-					// push the vertex in the priority queue
-					pq.enqueue(temp->x, temp->y, distance[temp->x][temp->y]);
-
-					// update the parent of the vertex
-					parent[temp->x][temp->y] = parent[x][y];
-					parent[temp->x][temp->y].push(temp->x, temp->y);
-
-
-				}
-
-			}
-			temp = temp->next;
-		}
-
 
 
 
@@ -199,22 +186,49 @@ void dijkstra(Graph& maze, Car& ai)
 
 }
 
-
-void showPath(Stack path, Graph& maze)
+void printVertices(Graph& maze)
 {
-
+	for (int i = 0; i < maze.gridSize; i++)
+	{
+		for (int j = 0; j < maze.gridSize; j++)
+		{
+			cout << maze.adjacencyList[i][j].x << " " << maze.adjacencyList[i][j].y << ": ";
+			LinkedList::Node* temp = maze.adjacencyList[i][j].head;
+			while (temp != nullptr)
+			{
+				cout << "(" << temp->vertex->x << ", " << temp->vertex->y << ", " << temp->weight << ") ";
+				temp = temp->next;
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
 }
 
 void play(Graph& maze, Car& player)
 {
 	while (1)
 	{
+
+		system("cls");
 		cout << "\033[42m";
 		cout << "\033[30m";
 		cout << "\n	Use arrow keys to move the car";
 		cout << "\n	Press `esc` to Quit";
 		cout << endl;
 		cout << "\n	Score: " << player.score;
+
+		//cout << "\nDebugging mode: " << endl;
+		//cout << "x: " << player.x << " y: " << player.y << endl;
+		//cout << "Right Exist of player: " << maze.ifRightExists(player.x, player.y) << endl;
+		//cout << "Left Exist of player: " << maze.ifLeftExists(player.x, player.y) << endl;
+		//cout << "Up Exist of player: " << maze.ifUpExists(player.x, player.y) << endl;
+		//cout << "Down Exist of player: " << maze.ifDownExists(player.x, player.y) << endl;
+
+
+
+
+
 		cout << "\033[37m";
 
 		cout << endl
@@ -243,16 +257,19 @@ void play(Graph& maze, Car& player)
 
 			break;
 		case 27:
-			exit(0);
+			return;
 
 			break;
+		case 114:
+		case 112:
+			cout << "paused" << endl;
+			Sleep(1000);
 		default:
 			cout << endl
 				<< "		Invalid input" << endl;
 
 			break;
 		}
-		system("cls");
 	}
 }
 
@@ -270,12 +287,15 @@ int main()
 
 
 	// maze.printVertices();
+	 printVertices(maze);
 
 	maze.adjacencyList[0][0].car = true;
 	maze.adjacencyList[gridSize - 1][gridSize - 1].finish = true;
 
 	Car player;
 	Car AI;
+	printVertices(maze);
+	printGrid(maze);
 
 	player.name = name;
 
@@ -292,7 +312,11 @@ int main()
 	case 1:
 	{
 		//auto start_time = startTimer();
+		// input usr name
 		play(maze, player);
+		cout << player.score;
+		cout << player.name;
+		// leader board
 		break;
 	}
 	case 2:
@@ -303,8 +327,6 @@ int main()
 	default:
 		break;
 	}
-
-
 
 	return 0;
 }
