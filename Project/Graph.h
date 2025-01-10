@@ -189,6 +189,40 @@ void readDataFromFile() {
 	cout << "Name: " << highscorer.name << endl << "Score: " << highscorer.score;
 }
 
+void ViewScoreBoard()
+{
+	ifstream inputFile("scores.txt");
+
+	if (!inputFile.is_open()) {
+		cout << "Error opening the file." << endl;
+		return;
+	}
+
+	int numPlayers = 0;
+	string line;
+	while (getline(inputFile, line)) {
+		++numPlayers;
+	}
+	inputFile.clear();
+	inputFile.seekg(0, ios::beg);
+
+	Player* players = new Player[numPlayers];
+
+	for (int i = 0; i < numPlayers; ++i) {
+		getline(inputFile, line, ',');
+		players[i].name = line;
+
+		inputFile >> players[i].score;
+		inputFile.ignore();
+	}
+	cout << "Player\tScore\n";
+	for (int i = 0; i < numPlayers; i++)
+	{
+		cout << players[i].name << "\t" << players[i].score << endl;
+	}
+}
+
+
 // Graph class for representing the maze
 class Graph {
 public:
@@ -344,7 +378,7 @@ public:
 				random = distribution(gen);
 				random2 = distribution(gen);
 
-				if (random == 1 && (random2 == 1 || random2 == 0)) {
+				if ((random == 1 || random == 0) && (random2 == 1 || random2 == 0 || random2 == 2)) {
 					adjacencyList[i][j].powerup = true;
 
 					LinkedList::Node* temp = adjacencyList[i][j].head;
@@ -371,7 +405,7 @@ public:
 					}
 
 				}
-				else if (random == 2 && (random2 == 1 || random2 == 3)) {
+				else if ((random == 3 || random == 2) && (random2 == 1 || random2 == 3)) {
 					adjacencyList[i][j].obstacle = true;
 
 					LinkedList::Node* temp = adjacencyList[i][j].head;
@@ -442,19 +476,83 @@ void printGrid(Graph& maze) {
 			}
 			else if (maze.adjacencyList[i][j].obstacle == true)
 			{
+				if (maze.adjacencyList[i][j].weight == 9)
+				{
+
 				cout << "\033[40m";
 				cout << "\033[31m";
-				cout << "x";
+				cout << "X";
 				cout << "\033[42m";
 				cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 9)
+				{
+
+					cout << "\033[40m";
+					cout << "\033[31m";
+					cout << "X";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 8)
+				{
+					cout << "\033[40m";
+					cout << "\033[31m";
+					cout << "%";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 7)
+				{
+					cout << "\033[40m";
+					cout << "\033[31m";
+					cout << "%";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 6)
+				{
+					cout << "\033[40m";
+					cout << "\033[31m";
+					cout << "x";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
 			}
 			else if (maze.adjacencyList[i][j].powerup == true)
 			{
-				cout << "\033[40m";
-				cout << "\033[32m";
-				cout << "+";
-				cout << "\033[42m";
-				cout << "\033[37m";
+				if (maze.adjacencyList[i][j].weight == 1)
+				{
+					cout << "\033[40m";
+					cout << "\033[32m";
+					cout << "+";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 2)
+				{
+					cout << "\033[40m";
+					cout << "\033[32m";
+					cout << "0";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 3)
+				{
+					cout << "\033[40m";
+					cout << "\033[32m";
+					cout << "o";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
+				else if (maze.adjacencyList[i][j].weight == 4)
+				{
+					cout << "\033[40m";
+					cout << "\033[32m";
+					cout << ">";
+					cout << "\033[42m";
+					cout << "\033[37m";
+				}
 			}
 			else {
 				cout << "\033[40m";
@@ -622,7 +720,6 @@ public:
 		}
 		else {
 			cout << "You can't move down" << endl;
-
 		}
 		showWin(maze);
 	}

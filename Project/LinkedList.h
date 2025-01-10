@@ -21,6 +21,8 @@ public:
 	bool obstacle;
 	bool powerup;
 
+	int weight;
+
 	class Node {
 	public:
 		LinkedList* vertex;
@@ -30,18 +32,19 @@ public:
 		Node(LinkedList* v, int w) : vertex(v), weight(w), next(nullptr) {}
 
 		void addWeight(int w, LinkedList* thiss) {
+			thiss->weight = w;
 			LinkedList::Node* temp = vertex->head;
 			while (temp != nullptr) {
 				// compare the address of this LinkedList object pointed by temp
 				if (temp->vertex == thiss) {
-					cout << *vertex << endl;
-					cout << "Vertex not found in the linked list." << endl;
 					temp->weight = w;
-					cout << temp->weight << endl;
+					//cout << *vertex << endl;
+					//cout << temp->weight << endl;
 					return;
 				}
 				temp = temp->next;
 			}
+					cout << "Vertex not found in the linked list." << endl;
 		}
 	};
 
@@ -118,7 +121,7 @@ public:
 	int rear;
 	int size;
 
-	Queue(int s = 100) : size(s), front(-1), rear(-1) {
+	Queue(int s = 10000) : size(s), front(-1), rear(-1) {
 		x = new int[size];
 		y = new int[size];
 	}
@@ -223,7 +226,7 @@ public:
 	int rear;
 	int size;
 
-	PriorityQueue(int s = 100) : size(s), front(-1), rear(-1) {
+	PriorityQueue(int s = 10000) : size(s), front(-1), rear(-1) {
 		x = new int[size];
 		y = new int[size];
 		distance = new int[size];

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Car">
+    <Position X="4.5" Y="0.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIghEAQEAAIAAAAIAAAAAAAEAAAAAABgCEAAACA=</HashCode>
+      <FileName>Graph.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Graph">
+    <Position X="9" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAIAAACAAAAAAgAIAgAAhAAAAAAAQA=</HashCode>
+      <FileName>Graph.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LinkedList">
+    <Position X="12.25" Y="0.5" Width="3" />
+    <NestedTypes>
+      <Class Name="LinkedList::Node" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LinkedList.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAhAAAAQAAAAAABAAAAAEAAAAgAABgCAIAAAE=</HashCode>
+      <FileName>LinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MaxHeap">
+    <Position X="1.25" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAFAIABAAIICAAAAAAEEAAGAAAAEAAAAAAA=</HashCode>
+      <FileName>Graph.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player">
+    <Position X="7.5" Y="5.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAEAAAAAAAgAQAAAAA=</HashCode>
+      <FileName>Graph.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PriorityQueue">
+    <Position X="11.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAIBAAAAAAAIAACAAEAEAAAAAAAABgAAAAQAA=</HashCode>
+      <FileName>LinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Queue">
+    <Position X="2" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAADAAAAAAAIAACIAAQAAAAAAAAABoAAAAQAA=</HashCode>
+      <FileName>LinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Stack">
+    <Position X="4.75" Y="5.5" Width="2" />
+    <NestedTypes>
+      <Class Name="Stack::Node" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LinkedList.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAMCAAAAIgAgAAAAAAAAAAIAAAAQAA=</HashCode>
+      <FileName>LinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9.33" />
+</ClassDiagram>

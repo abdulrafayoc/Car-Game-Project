@@ -13,7 +13,20 @@
 using namespace std;
 
 
-
+void reverseStack(Stack& s)
+{
+	Stack temp;
+	while (!s.isEmpty())
+	{
+		temp.push(s.topX(), s.topY());
+		s.pop();
+	}
+	while (!temp.isEmpty())
+	{
+		s.push(temp.topX(), temp.topY());
+		temp.pop();
+	}
+}
 
 void dijkstra(Graph& maze, Car& ai)
 {
@@ -64,13 +77,12 @@ void dijkstra(Graph& maze, Car& ai)
 	// while the priority queue is not empty
 	while (!pq.isEmpty())
 	{
-		// get the top element from the priority queue
+		// get the top vertex from the priority queue
 		int x = pq.frontX();
 		int y = pq.frontY();
 		int d = pq.frontD();
 
-
-		// pop the top element from the priority queue
+		// remove the top vertex from the priority queue
 		pq.dequeue();
 
 		// if the vertex is already visited, continue
@@ -82,49 +94,52 @@ void dijkstra(Graph& maze, Car& ai)
 		// mark the vertex as visited
 		visited[x][y] = true;
 
-		// if the vertex is the finish vertex, break
-		if (maze.adjacencyList[x][y].finish)
-		{
-			break;
-		}
-
-		// get the head of the adjacency list of the vertex
+		// get the adjacency list of the vertex
 		LinkedList::Node* temp = maze.adjacencyList[x][y].head;
 
-		Node* temp = maze.adjacencyList[x][y].head;
+		// for each vertex in the adjacency list
 		while (temp != nullptr)
 		{
 			// if the vertex is not visited
-			if (!visited[temp->x][temp->y])
+			if (!visited[temp->vertex->x][temp->vertex->y])
 			{
-				// if the distance of the vertex is greater than the distance of the current vertex + 1
-				if (distance[temp->x][temp->y] > d + temp->weight)
+				// if the distance of the vertex is greater than the distance of the current vertex + the weight of the edge
+				if (distance[temp->vertex->x][temp->vertex->y] > d + temp->weight)
 				{
-					cout << "x: " << temp->x << " y: " << temp->y << endl;
-					cout << "d: " << d << " weight: " << temp->weight << endl;
 					// update the distance of the vertex
+					distance[temp->vertex->x][temp->vertex->y] = d + temp->weight;
 
-					distance[temp->x][temp->y] = d + temp->weight;
+					// push the vertex in the priority queue
+					pq.enqueue(temp->vertex->x, temp->vertex->y, distance[temp->vertex->x][temp->vertex->y]);
 
-
+					// update the parent of the vertex
+					parent[temp->vertex->x][temp->vertex->y] = parent[x][y];
+					parent[temp->vertex->x][temp->vertex->y].push(temp->vertex->x, temp->vertex->y);
+				}
+			}
+			temp = temp->next;
+		}	
 
 
 	}
 
-
-
 	printGrid(maze);
+
 
 	// print the path
 	cout << endl
 		<< "Path: " << endl;
 	Stack path = parent[gridSize - 1][gridSize - 1];
 
-	while (!path.isEmpty())
+	// reverse the path
+	//reverseStack(path);
+	
+	/*while (!path.isEmpty())
 	{
 		cout << path.topX() << " " << path.topY() << endl;
 		path.pop();
-	}
+	}*/
+
 
 	while (!path.isEmpty())
 	{
@@ -133,38 +148,42 @@ void dijkstra(Graph& maze, Car& ai)
 
 		int x = ai.x;
 		int y = ai.y;
-		maze.adjacencyList[xx][yy].car = true;
 
 		// if move up
 		if (x == xx && y == yy - 1)
 		{
-			ai.cordinates(x, y);
+			ai.cordinates(xx, yy);
 			ai.updateScore(maze);
+			ai.moveUp(maze);
 		}
 		// if move down
 		else if (x == xx && y == yy + 1)
 		{
-			ai.cordinates(x, y);
+			ai.cordinates(xx, yy);
 			ai.updateScore(maze);
+			ai.moveDown(maze);
 
 		}
 		// if move left
 		else if (x == xx - 1 && y == yy)
 		{
-			ai.cordinates(x, y);
+			ai.cordinates(xx, yy);
 			ai.updateScore(maze);
+						ai.moveLeft(maze);
 		}
 		// if move right
 		else if (x == xx + 1 && y == yy)
 		{
-			ai.cordinates(x, y);
+			ai.cordinates(xx, yy);
 			ai.updateScore(maze);
+			ai.moveRight(maze);
 		}
 
+		maze.adjacencyList[xx][yy].car = true;
 
 		path.pop();
 
-		//system("cls");
+		system("cls");
 
 		cout << "\033[42m";
 		cout << "\033[30m";
@@ -180,9 +199,8 @@ void dijkstra(Graph& maze, Car& ai)
 
 		printGrid(maze);
 		ai.updateScore(maze);
-		Sleep(400);
+		Sleep(100);
 	}
-
 
 }
 
@@ -238,8 +256,7 @@ void play(Graph& maze, Car& player)
 		printGrid(maze);
 		int c = 0;
 
-		switch ((c = _getch()))
-		{
+		switch ((c = _getch())) {
 		case KEY_UP:
 			player.moveUp(maze);
 
@@ -277,17 +294,23 @@ void play(Graph& maze, Car& player)
 
 int main()
 {
-	int gridSize = 10;
 
-	Graph maze(gridSize);
+
+	int gridSize = 16;
+
+	cout << "Enter grid size: ";
+	cin >> gridSize;
+
 
 	string name;
 	cout << "Enter Name: ";
+	cin.ignore();
 	getline(cin, name);
 
 
+	Graph maze(gridSize);
 	// maze.printVertices();
-	 printVertices(maze);
+	//printVertices(maze);
 
 	maze.adjacencyList[0][0].car = true;
 	maze.adjacencyList[gridSize - 1][gridSize - 1].finish = true;
@@ -301,7 +324,8 @@ int main()
 
 	// menu
 	cout << "1. Play" << endl;
-	cout << "2. AI" << endl;
+	cout << "2. Auto" << endl;
+	cout << "3. Leader Board" << endl;
 
 	cout << "Enter your choice: ";
 	int choice;
@@ -323,6 +347,14 @@ int main()
 	{
 		dijkstra(maze, AI);
 		cout << "function successfull";
+	break;
+	}
+	case 3:
+	{
+		// leader board
+		ViewScoreBoard();
+		
+		break;
 	}
 	default:
 		break;
